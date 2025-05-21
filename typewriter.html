@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Typewriter :)</title>
+    <link rel="stylesheet" href="https://pyscript.net/snapshots/2024.9.2/core.css" />
+    <script type="module" src="https://pyscript.net/snapshots/2024.9.2/core.js"></script>
+</head>
+<body class="dark-theme">
+    <div class="centered-column">
+        <button id="theme_toggle_btn" class="theme-toggle-btn" py-click="toggle_theme">☀️</button>
+        <label for="volume_slider">🔊</label><input type="range" id="volume_slider" min="0" max="1" step="0.01" value="1" style="vertical-align: middle; width: 120px;">
+        <br><br>
+        <input id="typewriter_input" type="text" placeholder="Type something and press Enter" py-keydown="handle_keydown" />
+        <br><br>
+        <p id="typewriter_output"></p>
+        <audio id="typewriter_sfx" src="345955__knufds__typewriter-bell-carriage-reset.wav" preload="auto"></audio>
+        <audio id="typewriter_key" src="106793__robinhood76__02246-key-type-shot-strike-typewriter.wav" preload="auto"></audio>
+    </div>
+    <script type="py">
+    from pyscript import window
+
+    input = window.document.getElementById('typewriter_input')
+    output = window.document.getElementById('typewriter_output')
+    sfx_return_src = window.document.getElementById('typewriter_sfx').src
+    sfx_key_src = window.document.getElementById('typewriter_key').src
+    theme_btn = window.document.getElementById('theme_toggle_btn')
+    body = window.document.body
+
+    volume_slider = window.document.getElementById('volume_slider')
+
+    def handle_keydown(event):
+        # Always get the current value from the slider
+        current_volume = float(volume_slider.value)
+        if event.key == "Enter":
+            updateBody()
+            input.value = ""
+
+            # new: we want to play a new copy of the sound every time
+            # if we don't do this, it'll only play if it's not already playing
+            sfx_return = window.Audio.new(sfx_return_src)
+            sfx_return.volume = current_volume
+            sfx_return.play()
+        # if any other key is pressed, play sfx too
+        else:
+            sfx_key = window.Audio.new(sfx_key_src)
+            sfx_key.volume = current_volume
+            sfx_key.play()
+
+    def updateBody():
+        output.innerHTML += input.value + "<br>"
+
+    def toggle_theme(event):
+        if body.classList.contains('light-theme'):
+            body.classList.remove('light-theme')
+            body.classList.add('dark-theme')
+            theme_btn.innerHTML = "☀️"
+        else:
+            body.classList.remove('dark-theme')
+            body.classList.add('light-theme')
+            theme_btn.innerHTML = "🌙"
+    </script>
+</body>
+<style>
+body.light-theme
+{
+    background: #d3cdc4;  /* darker than the column */
+    color: #222;
+}
+body.dark-theme
+{
+    background: #111214;  /* darker than the column */
+    color: #eee;
+}
+
+.centered-column
+{
+    width: 40%;
+    margin: 40px auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+    padding: 2em;
+}
+
+/* Light theme column */
+body.light-theme .centered-column
+{
+    background: #faf9f6;
+}
+
+/* Dark theme column */
+body.dark-theme .centered-column
+{
+    background: #232528;
+}
+
+#typewriter_input
+{
+    width: 100%;
+    font-size: 1.2em;
+    box-sizing: border-box;
+    background: inherit;
+    color: inherit;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    padding: 8px;
+    font-family: 'Courier New', Courier, monospace;
+}
+#typewriter_output
+{
+    margin-top: 1em;
+    font-size: 1.1em;
+    line-height: 1.5;
+}
+.theme-toggle-btn
+{
+    float: right;
+    margin: 0 0 20px 0;
+    padding: 8px 16px;
+    font-size: 1em;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #eee;
+    color: #222;
+}
+body.dark-theme .theme-toggle-btn
+{
+    background: #222;
+    color: #eee;
+}
+#volume_slider
+{
+    margin-left: 8px;
+}
+body 
+{
+    font-family: 'Courier New', Courier, monospace;
+}
+</style>
+</html>
+
